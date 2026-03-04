@@ -1,0 +1,101 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content %}
+  <div class="index">
+    <div id="content">
+      <h1>Notas</h1>
+      <form method="post">
+        {% csrf_token %}
+        <label for="">CNPJ:</label><br />
+        <input type="number" name="for_cnpj" id="for_cnpj" placeholder="Digite aqui" oninput="this.value.toUpperCase()" required /><br />
+
+        <label for="">Nome da empresa:</label><br />
+        <input type="text" name="for_nm_fornecedor" placeholder="Digite aqui" oninput="this.value.toUpperCase()" required /><br />
+
+        <label for="">Multifial:</label><br />
+        <label for="sim">Sim</label>
+        <input type="radio" id="s" name="for_flag_multifilial" value="s" required />
+        <label for="nao">Não</label>
+        <input type="radio" id="n" name="for_flag_multifilial" value="n" required />
+
+        <br /><br /><br />
+        <input class="cadastrar" type="submit" value="Cadastrar" />
+      </form>
+
+      <br />
+
+      <a href="{% url 'notas_fornecedor' %}"><button class="dados" id="mostrarDados">Relatório</button></a>
+    </div>
+
+    <div class="loaderBar" id="loaderBar"></div>
+    <div class="errorMessage" id="errorMessage">CNPJ não cadastrado. Verifique e tente novamente.</div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      const csrftoken = getCookie('csrftoken')
+    
+      $('#for_cnpj').on('keydown', function (event) {
+        if (event.keyCode === 13) {
+          event.preventDefault()
+          var cnpj = $(this).val()
+    
+          // Oculta todo o conteúdo da página e mostra o loader
+          $('#content').addClass('hiddenContent')
+          $('#loaderBar').show()
+          $('#errorMessage').hide() // Oculta a mensagem de erro caso esteja visível
+    
+          $.ajax({
+            type: 'POST',
+            url: '/verificar_cnpj/',
+            data: { for_cnpj: cnpj },
+            success: function (response) {
+              if (response.cnpj_exists) {
+                window.location.href = '/notas/?cnpj=' + cnpj
+              } else {
+                // Exibe a mensagem de erro e mostra o conteúdo novamente
+                $('#loaderBar').hide()
+                $('#errorMessage').show()
+                $('#content').removeClass('hiddenContent')
+              }
+            },
+            error: function () {
+              // Em caso de erro, exibe o conteúdo novamente e oculta o loader
+              $('#loaderBar').hide()
+              $('#content').removeClass('hiddenContent')
+              alert('Ocorreu um erro ao verificar o CNPJ.')
+            }
+          })
+        }
+      })
+    
+      // Evento para mostrar o loader quando o botão "Relatório" for clicado
+      $('#mostrarDados').on('click', function (event) {
+        event.preventDefault() // Evita que o link seja seguido imediatamente
+        $('#content').addClass('hiddenContent')
+        $('#loaderBar').show()
+    
+        // Redireciona após um pequeno atraso para garantir que o loader seja visível
+        setTimeout(function () {
+          window.location.href = '{% url "notas_fornecedor" %}'
+        }, 500)
+      })
+    })
+    
+    function getCookie(name) {
+      var cookieValue = null
+      if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';')
+        for (var i = 0; i < cookies.length; i++) {
+          var cookie = jQuery.trim(cookies[i])
+          if (cookie.substring(0, name.length + 1) === name + '=') {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+            break
+          }
+        }
+      }
+      return cookieValue
+    }
+  </script>
+{% endblock %}

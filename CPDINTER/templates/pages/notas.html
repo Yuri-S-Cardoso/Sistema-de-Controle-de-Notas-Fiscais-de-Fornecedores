@@ -1,0 +1,267 @@
+{% extends 'base/base.html' %}
+{% block content %}
+  <style>
+    /* Estilização básica da tabela */
+    table{
+      border-radius: 20px;
+    }
+    #notasTabela {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    #notasTabela th, #notasTabela td {
+      border: 1px solid black;
+      padding: 2px;
+      text-align: center;
+    }
+
+    /* Estilo para o cabeçalho */
+    #notasTabela th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    /* Alterar a cor da linha ao passar o mouse */
+    #notasTabela tbody tr:hover {
+      background-color: whitesmoke; /* Cor clara para destaque */
+      
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+      gap: 10px;
+    }
+    
+    .pagination a {
+      padding: 8px 12px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    
+    .pagination a:hover {
+      background-color: #0056b3;
+    }
+    
+    .pagination span {
+      font-weight: bold;
+      padding: 8px;
+  }
+  
+  </style>
+  <div class='index'>
+    <h1>Notas fornecedor</h1>
+    <form method="post" autocomplete="off">
+      {% csrf_token %}
+        <div class="bloco">
+            <label for="for_cnpj">CNPJ:</label><br>
+            <input type="number" name="for_cnpj" value="{{ request.GET.cnpj }}" placeholder="Digite aqui" oninput="if(this.value.length > 14) this.value = this.value.slice(0, 14);" required readonly  />
+                <br>
+            <label for="for_id_sequencial">ID:</label><br>
+            <input type="number" name="for_id_sequencial" placeholder="Digite aqui" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" required value="{{ proximo_id_sequencial }}" />
+        </div>  
+        <div class="bloco">
+          <label for="for_desc_nota">LOJAS:</label><br>
+          <select name="for_desc_nota" id="for_desc_nota" required>
+              <option value="">Selecione uma loja</option>
+              <option value="DUTRA">DUTRA</option>
+              <option value="TANQUE">TANQUE</option>
+              <option value="COPACABANA">COPACABANA</option>
+              <option value="PAVUNA">PAVUNA</option>
+              <option value="RECREIO">RECREIO</option>
+              <option value="TIRADENTES">TIRADENTES</option>
+              <option value="NITEROI">NITEROI</option>
+              <option value="PENHA">PENHA</option>
+              <option value="PILARES">PILARES</option>
+              <option value="CASCADURA">CASCADURA</option>
+              <option value="CURTUME">CURTUME</option>
+              <option value="PARADA DE LUCAS">PARADA DE LUCAS</option>
+              <option value="VILA CRUZEIRO">VILA CRUZEIRO</option>
+              <option value="INHAUMA">INHAUMA</option>
+              <option value="ALCANTARA">ALCANTARA</option>
+              <option value="COELHO NETO">COELHO NETO</option>
+              <option value="REALENGO">REALENGO</option>
+              <option value="BANGU">BANGU</option>
+              <option value="BARRA DA TIJUCA">BARRA DA TIJUCA</option>
+              <option value="NOVA IGUAÇU">NOVA IGUAÇU</option>
+              <option value="CAMPO GRANDE">CAMPO GRANDE</option>
+              <option value="CEASA">CEASA</option>
+          </select><br>
+
+          <label for="for_cd_loja">COD. LOJAS:</label><br>
+          <select name="for_cd_loja" id="for_cd_loja" required>
+              <option value="" disabled selected>Selecione uma loja</option>
+              <option value="1">Loja 1</option>
+              <option value="6">Loja 6</option>
+              <option value="8">Loja 8</option>
+              <option value="15">Loja 15</option>
+              <option value="12">Loja 12</option>
+              <option value="13">Loja 13</option>
+              <option value="10">Loja 10</option>
+              <option value="5">Loja 5</option>
+              <option value="16">Loja 16</option>
+              <option value="17">Loja 17</option>
+              <option value="20">Loja 20</option>
+              <option value="22">Loja 22</option>
+              <option value="23">Loja 23</option>
+              <option value="24">Loja 24</option>
+              <option value="26">Loja 26</option>
+              <option value="27">Loja 27</option>
+              <option value="28">Loja 28</option>
+              <option value="29">Loja 29</option>
+              <option value="31">Loja 31</option>
+              <option value="7">Loja 7</option>
+              <option value="2">Loja 2</option>
+              <option value="18">Loja 18</option>
+          </select>
+        </div> 
+        <div class="bloco">
+          <label for="for_dia_entrega">DIA DA ENTREGA:</label><br>
+            <input type="number" name="for_dia_entrega" placeholder="Digite aqui" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" required /><br>
+            <label for="for_dia_vencimenBoZo!@#171to">DIA DO VENCIMENTO:</label><br>
+            <input type="number" name="for_dia_vencimento" placeholder="Digite aqui" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" required />
+        </div> 
+        <br /><br />
+        <input class="cadastrar" type="submit" value="Cadastrar" />
+        <a class="dados" href="{% url 'index' %}">Sair</a>
+        {% if mensagem %}
+        <br>
+          <p style="color: {% if 'sucesso' in mensagem|lower %}green{% else %}red{% endif %}; background-color: black; padding: 5px; display: inline-block;">{{ mensagem }}</p>
+        {% endif %}
+    </form>
+    <br>
+    <table id="notasTabela">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Descrição Nota</th>
+          <th>Código Loja</th>
+          <th>Dia Entrega</th>
+          <th>Dia Vencimento</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for nota in notas_fornecedor %}
+          <tr>
+            <td style="text-align: center;">
+              <a class="tabela" href="{% url 'mensais' %}?for_id_sequencial={{ nota.for_id_sequencial }}&for_cnpj={{ nota.for_cnpj }}" style="display: block; width: 100%; height: 100%;">
+                {{ nota.for_id_sequencial }}
+              </a>
+            </td>
+            <td>{{ nota.for_desc_nota }}</td>
+            <td>{{ nota.for_cd_loja }}</td>
+            <td>{{ nota.for_dia_entrega }}</td>
+            <td>{{ nota.for_dia_vencimento }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="button-container">
+      <div class="pagination">
+          <span class="step-links">
+              {% if page_obj.has_previous %}
+                  <a href="?cnpj={{ cnpj }}&page=1">&laquo; primeira</a>
+                  <a href="?cnpj={{ cnpj }}&page={{ page_obj.previous_page_number }}">anterior</a>
+              {% endif %}
+      
+              <span class="current">
+                  Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+              </span>
+      
+              {% if page_obj.has_next %}
+                  <a href="?cnpj={{ cnpj }}&page={{ page_obj.next_page_number }}">próxima</a>
+                  <a href="?cnpj={{ cnpj }}&page={{ page_obj.paginator.num_pages }}">última &raquo;</a>
+              {% endif %}
+          </span>
+      </div>
+    </div>
+    
+  </div>
+  <script>
+    const lojas = {
+        "DUTRA": "1",
+        "TANQUE": "6",
+        "COPACABANA": "8",
+        "PAVUNA": "15",
+        "RECREIO": "12",
+        "TIRADENTES": "13",
+        "NITEROI": "10",
+        "PENHA": "5",
+        "PILARES": "16",
+        "CASCADURA": "17",
+        "CURTUME": "20",
+        "PARADA DE LUCAS": "22",
+        "VILA CRUZEIRO": "23",
+        "INHAUMA": "24",
+        "ALCANTARA": "26",
+        "COELHO NETO": "27",
+        "REALENGO": "28",
+        "BANGU": "29",
+        "BARRA DA TIJUCA": "31",
+        "NOVA IGUAÇU": "7",
+        "CAMPO GRANDE": "2",
+        "CEASA": "18"
+    };
+
+    const lojasReverso = {
+        "1": "DUTRA",
+        "6": "TANQUE",
+        "8": "COPACABANA",
+        "15": "PAVUNA",
+        "12": "RECREIO",
+        "13": "TIRADENTES",
+        "10": "NITEROI",
+        "5": "PENHA",
+        "16": "PILARES",
+        "17": "CASCADURA",
+        "20": "CURTUME",
+        "22": "PARADA DE LUCAS",
+        "23": "VILA CRUZEIRO",
+        "24": "INHAUMA",
+        "26": "ALCANTARA",
+        "27": "COELHO NETO",
+        "28": "REALENGO",
+        "29": "BANGU",
+        "31": "BARRA DA TIJUCA",
+        "7": "NOVA IGUAÇU",
+        "2": "CAMPO GRANDE",
+        "18": "CEASA"
+    };
+
+    const descNotaSelect = document.getElementById('for_desc_nota');
+    const cdLojaSelect = document.getElementById('for_cd_loja');
+
+    descNotaSelect.addEventListener('change', function() {
+        const selectedValue = descNotaSelect.value;
+        cdLojaSelect.value = lojas[selectedValue] || '';
+    });
+
+    cdLojaSelect.addEventListener('change', function() {
+        const selectedValue = cdLojaSelect.value;
+        descNotaSelect.value = lojasReverso[selectedValue] || '';
+    });
+
+    //-------------------------------------------------------------------
+
+    // Seleciona a tabela
+    const tabela = document.getElementById('notasTabela');
+    const tbody = tabela.querySelector('tbody');
+
+    // Converte as linhas do tbody em um array
+    const linhas = Array.from(tbody.querySelectorAll('tr'));
+
+    // Ordena as linhas em ordem decrescente com base no ID
+    linhas.sort((a, b) => {
+      const idA = parseInt(a.cells[0].innerText.trim());
+      const idB = parseInt(b.cells[0].innerText.trim());
+      return idB - idA; // Ordem decrescente
+    });
+
+    // Reanexa as linhas ordenadas ao tbody
+    linhas.forEach(linha => tbody.appendChild(linha));
+  </script>
+{% endblock %}

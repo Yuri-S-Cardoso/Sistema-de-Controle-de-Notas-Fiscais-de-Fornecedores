@@ -1,0 +1,360 @@
+{% load static %}
+
+<head>
+    <link rel="icon" href="{% static 'image/inter.png' %}" type="image/x-icon" />
+    <title>Relatório</title>
+</head>
+<style>
+    body {
+        background-image: url('/static/image/background.jpg');
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+        border: 1px solid #007bff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background-color: rgba(255, 255, 255, 0.55);
+        overflow-x: auto;
+        text-align: center;
+    }
+    
+    thead {
+        background-color: black;
+    }
+    
+    th {
+        text-align: left;
+        padding: 15px;
+        border-bottom: 2px solid #696969;
+        font-weight: bold;
+        color: white;
+        background-color: #696969;
+    }
+    
+    td {
+        padding: 15px;
+        border-bottom: 1px solid #007bff;
+        color: #555;
+    }
+    
+    tr:hover {
+        background-color: #c0c0c0;
+        transition: background-color 0.3s;
+    }
+    
+    h1 {
+        font-size: 30px;
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    title {
+        font-size: 18px;
+        text-align: center;
+    }
+    
+    #botaoVoltarAoInicio {
+        display: none;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 99;
+    }
+    
+    .container {
+        display: flex;
+        width: 100%;
+    }
+    
+    .box {
+        flex: 1;
+        border: 1px solid #007bff;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 5px;
+        background-color: rgba(88, 88, 88, 0.705);
+    }
+    
+    label {
+        margin-bottom: 5px;
+        display: block;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+    }
+    
+    .button-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    button {
+        margin: 5px;
+    }
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        gap: 10px;
+    }
+    
+    .pagination a {
+        padding: 8px 12px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+    
+    .pagination a:hover {
+        background-color: #0056b3;
+    }
+    
+    .pagination span {
+        font-weight: bold;
+        padding: 8px;
+    }
+</style>
+<h1>Relatório de notas mensais</h1>
+
+<div class="container">
+    <div class="box">
+        <label style="text-align: center;"><u>Fornecedor</u></label>
+        <label for="filtroCnpj">CNPJ:</label>
+        <input type="text" id="filtroCnpj" onkeyup="filtrarCnpj()" placeholder="Digite o CNPJ" />
+        <label for="filtroNota">Número da Nota:</label>
+        <input type="text" id="filtroNota" onkeyup="filtrarNota()" placeholder="Digite o número da nota" />
+        <label for="filtroFornecedor">Nome do Fornecedor:</label>
+        <input type="text" id="filtroFornecedor" onkeyup="filtrarFornecedor()" placeholder="Digite o nome do fornecedor" />
+    </div>
+
+    <div class="box">
+        <form method="get" action="{% url 'notas_fornecedor' %}">
+            <label style="text-align: center;"><u>Vencimento</u></label>
+            <label for="data_inicio">Início:</label>
+            <input type="date" id="data_inicio" name="data_inicio" value="{{ request.GET.data_inicio }}" />
+            <label for="data_fim">Término:</label>
+            <input type="date" id="data_fim" name="data_fim" value="{{ request.GET.data_fim }}" onchange="this.form.submit()" />
+        </form>
+    </div>
+
+    <div class="box">
+        <form method="get" action="{% url 'notas_fornecedor' %}">
+            <label style="text-align: center;"><u>Emissão</u></label>
+            <label for="data_emissao_inicio">Início:</label>
+            <input type="date" id="data_emissao_inicio" name="data_emissao_inicio" value="{{ request.GET.data_emissao_inicio }}" />
+            <label for="data_emissao_fim">Término:</label>
+            <input type="date" id="data_emissao_fim" name="data_emissao_fim" value="{{ request.GET.data_emissao_fim }}" onchange="this.form.submit()" />
+        </form>
+    </div>
+</div>
+
+<div class="button-container">
+    <a href="{% url 'registros_no_mes' %}"><button class="dados">Lançadas no Mês</button></a>
+    <button id="imprimirTabela" onclick="gerarExcel()">Gerar Excel</button>
+
+    <a href="{% url 'notas_fornecedor' %}"><button class="dados">Limpar filtro</button></a>
+
+    <a href="{% url 'index' %}"><button class="dados">Voltar</button></a>
+</div>
+
+<br />
+<table id="tabelaNotas">
+    <thead>
+        <tr class="fixed-header">
+            <th>NOME DO FORNECEDOR</th>
+            <th>CNPJ</th>
+            <th>NUMERO DA NOTA</th>
+            <th>VALOR DA NOTA</th>
+            <th>EMISSÃO</th>
+            <th>VENCIMENTO</th>
+            <th>ENVIO CADASTRO</th>
+            <th>OBSERVAÇÃO</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for nota in notas_mensais %}
+        <tr>
+            <td>
+                {% for fornecedor in fornecedores %} {% if nota.for_cnpj_id == fornecedor.for_cnpj %} {{ fornecedor.for_nm_fornecedor }} {% endif %} {% endfor %}
+            </td>
+            <td>{{ nota.for_cnpj_id }}</td>
+            <td>{{ nota.for_nr_nota }}</td>
+            <td>R$ {{ nota.for_vl_nota }}</td>
+            <td>{{ nota.for_dt_emissao }}</td>
+            <td>{{ nota.for_dt_vencimento }}</td>
+            <td>{{ nota.for_dt_envio_cadastro }}</td>
+            <td>{{ nota.for_tx_observacao }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<button onclick="voltarAoInicio()" id="botaoVoltarAoInicio" style="display: none;">Voltar ao Início</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var tabela = document.querySelector('table')
+        var linhas = Array.from(tabela.querySelectorAll('tbody tr'))
+
+        // Ordena as linhas: primeiro por data de vencimento (mais atual) e depois por fornecedor
+        linhas.sort(function(a, b) {
+            var envioA = new Date(a.cells[7].textContent.trim())
+            var envioB = new Date(b.cells[7].textContent.trim())
+            return envioB - envioA
+
+            if (vencimentoA !== vencimentoB) {
+                return vencimentoB - vencimentoA
+            }
+        })
+
+        // Reapenda as linhas ordenadas ao tbody
+        var tbody = tabela.querySelector('tbody')
+        linhas.forEach(function(linha) {
+            tbody.appendChild(linha)
+        })
+    })
+
+    /*
+              document.addEventListener('DOMContentLoaded', function () {
+                var tabela = document.querySelector('table')
+                var linhas = Array.from(tabela.querySelectorAll('tbody tr'))
+              
+                linhas.sort(function (a, b) {
+                  var fornecedorA = a.cells[0].textContent.trim()
+                  var fornecedorB = b.cells[0].textContent.trim()
+                  return fornecedorA.localeCompare(fornecedorB)
+                })
+              
+                var tbody = tabela.querySelector('tbody')
+                linhas.forEach(function (linha) {
+                  tbody.appendChild(linha)
+                })
+              })
+              */
+
+    //------------------------------------------------------------------
+
+    function voltarAoInicio() {
+        document.documentElement.scrollTop = 0 // Para navegadores modernos
+        document.body.scrollTop = 0 // Para navegadores antigos
+    }
+
+    window.onscroll = function() {
+        mostrarOcultarBotao()
+    }
+
+    function mostrarOcultarBotao() {
+        var botaoVoltarAoInicio = document.getElementById('botaoVoltarAoInicio')
+
+        if (document.documentElement.scrollTop > 100 || document.body.scrollTop > 100) {
+            botaoVoltarAoInicio.style.display = 'block'
+        } else {
+            botaoVoltarAoInicio.style.display = 'none'
+        }
+    }
+
+    //--------------------------------------------------------------------
+
+    //Filtro CNPJ
+
+    function filtrarCnpj() {
+        var input, filter, table, tbody, tr, td, i, cnpjFornecedor
+        input = document.getElementById('filtroCnpj')
+        filter = input.value.toUpperCase()
+        table = document.querySelector('table')
+        tbody = table.querySelector('tbody')
+        tr = tbody.getElementsByTagName('tr')
+
+        for (i = 0; i < tr.length; i++) {
+            cnpjFornecedor = tr[i].querySelector('td:nth-child(2)')
+            if (cnpjFornecedor) {
+                if (cnpjFornecedor.textContent.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = ''
+                } else {
+                    tr[i].style.display = 'none'
+                }
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------
+
+    //Filtro Nome do Fornecedor
+
+    function filtrarFornecedor() {
+        var input, filter, table, tbody, tr, td, i, nomeFornecedor
+        input = document.getElementById('filtroFornecedor')
+        filter = input.value.toUpperCase()
+        table = document.querySelector('table')
+        tbody = table.querySelector('tbody')
+        tr = tbody.getElementsByTagName('tr')
+
+        for (i = 0; i < tr.length; i++) {
+            nomeFornecedor = tr[i].querySelector('td:nth-child(1)')
+            if (nomeFornecedor) {
+                if (nomeFornecedor.textContent.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = ''
+                } else {
+                    tr[i].style.display = 'none'
+                }
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------
+
+    function filtrarNota() {
+        var input, filter, table, tbody, tr, td, i, numeroNota
+        input = document.getElementById('filtroNota')
+        filter = input.value.toUpperCase()
+        table = document.querySelector('table')
+        tbody = table.querySelector('tbody')
+        tr = tbody.getElementsByTagName('tr')
+
+        for (i = 0; i < tr.length; i++) {
+            numeroNota = tr[i].querySelector('td:nth-child(3)')
+            if (numeroNota) {
+                if (numeroNota.textContent.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = ''
+                } else {
+                    tr[i].style.display = 'none'
+                }
+            }
+        }
+    }
+
+    function limparFiltroNota() {
+        document.getElementById('filtroNota').value = ''
+            // Chame a função de filtrarNota() para exibir todas as linhas
+        filtrarNota()
+    }
+
+    //--------------------------------------------------------------------
+
+    function gerarExcel() {
+        // Seleciona a tabela
+        var tabela = document.getElementById('tabelaNotas')
+
+        // Converte a tabela HTML para um livro Excel
+        var wb = XLSX.utils.table_to_book(tabela, {
+            sheet: 'Notas'
+        })
+
+        // Gera e baixa o arquivo Excel
+        XLSX.writeFile(wb, 'notas_mensais.xlsx')
+    }
+
+    //----------------------------------------------
+</script>

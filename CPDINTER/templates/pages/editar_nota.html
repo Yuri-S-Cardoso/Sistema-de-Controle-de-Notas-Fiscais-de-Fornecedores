@@ -1,0 +1,12 @@
+{% extends 'base/base.html' %}
+{% block content %}
+    <h2>Editar Nota: {{ form.instance.for_nr_nota }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Salvar Alterações</button>
+        <a href="{% url 'mensais' %}">
+            <button type="submit" >Voltar</button>
+        </a>
+    </form>
+{% endblock %}

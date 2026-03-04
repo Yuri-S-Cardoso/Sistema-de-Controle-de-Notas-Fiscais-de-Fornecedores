@@ -1,0 +1,296 @@
+body {
+    background-image: url('/static/image/background.jpg');
+}
+
+header {
+    background-color: rgba(108, 108, 108, 0.705);
+    text-align: center;
+    border-radius: 20px;
+    margin: 4% auto; /* Margem superior e inferior responsiva */
+    border-width: 2px;
+    border-color: #007bff;
+    border-style: solid;
+    width: 85%; /* Largura adaptável */
+    height: auto; /* Permite que o conteúdo determine a altura */
+    display: block;
+    padding: 5%; /* Espaçamento interno para responsividade */
+}
+
+
+.index h1 {
+    text-decoration: underline;
+    font-size: 50px;
+}
+
+.index label {
+    line-height: 2;
+    font-size: 25px;
+}
+
+.index input[type="text"] {
+    border-color: #007bff;
+    padding: 8px;
+    border-radius: 5px;
+    width: 300px;
+    font-size: 15px;
+}
+
+.index input[type="number"] {
+    border-color: #007bff;
+    padding: 8px;
+    border-radius: 5px;
+    width: 300px;
+    font-size: 15px;
+}
+
+.index input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button,
+.index select {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.index input[type="radio"],
+.index select {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #333;
+    border-radius: 50%;
+    background-color: white;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.index input[type="submit"] {
+    background-color: #000000;
+    color: white;
+    padding: 12px 22px; 
+    border:none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.index input[type="submit"]:hover {
+    background-color: #383838;
+}
+
+.bloco {
+    display: inline-block;
+    margin: 0 20px;
+}
+
+table {
+
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th,
+td {
+    border: 1px solid black;
+    padding: 3px;
+    text-align: left;
+}
+
+th {
+    background-color: #A9A9A9;
+    font-size: 15px;
+}
+
+.index input[type="date"] {
+    border-color: #007bff;
+    color: #333;
+    background-color: #f4f4f4;
+    padding: 1.5px;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+.index input[type="date"] {
+    width: 250px;
+    height: 30px;
+}
+
+.sair {
+    background-color: #000000;
+    color: white;
+    padding: 12.5px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.sair:hover {
+    background-color: #383838;
+}
+
+.tabela {
+    text-decoration: none;
+    color: black;
+}
+
+button {
+    cursor: pointer;
+}
+
+.voltar {
+    display: flex;
+    background-color: #000000;
+    color: white;
+    padding: 12.5px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    text-decoration: none;
+    text-align: center;
+    position: absolute;
+    right: 525px;
+    top: 625px;
+}
+
+.voltar:hover {
+    background-color: #383838;
+}
+
+.dados {
+    display: flex;
+    background-color: #000000;
+    color: white;
+    padding: 12.5px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    text-decoration: none;
+    text-align: center;
+    position: absolute;
+    right: 4%;
+    top: 10%;
+}
+
+.dados:hover {
+    background-color: #383838;
+}
+
+.index select {
+    border-color: #007bff;
+    color: #333;
+    background-color: #f4f4f4;
+    padding: 2px;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+.index select {
+    width: 280px;
+    height: 35px;
+}
+
+/* From Uiverse.io by dylanharriscameron */
+.loaderBar {
+    width: calc(160px / 0.707);
+    height: 10px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    border: 1px solid #006dfe;
+    position: relative;
+    overflow: hidden;
+    display: none;
+    /* Oculta a barra inicialmente */
+    margin: 15% auto;
+    /* Centraliza a barra na tela */
+}
+
+.loaderBar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    border-radius: 5px;
+    background: repeating-linear-gradient(45deg, #0031f2 0 30px, #006dfe 0 40px) right/200% 100%;
+    animation: fillProgress 6s ease-in-out infinite, lightEffect 1s infinite linear;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fillProgress {
+    0% {
+        width: 0;
+    }
+
+    33% {
+        width: 33.333%;
+    }
+
+    66% {
+        width: 66.67%;
+    }
+
+    100% {
+        width: 100%;
+    }
+}
+
+@keyframes lightEffect {
+
+    0%,
+    20%,
+    40%,
+    60%,
+    80%,
+    100% {
+        background: repeating-linear-gradient(45deg, #0031f2 0 30px, #006dfe 0 40px) right/200% 100%;
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        background: repeating-linear-gradient(45deg, #0031f2 0 30px, #006dfe 0 40px, rgba(255, 255, 255, 0.3) 0 40px) right/200% 100%;
+    }
+}
+
+.hiddenContent {
+    display: none;
+}
+
+.errorMessage {
+    background-color: #ffcc00;
+    /* Cor de fundo amarela */
+    color: black;
+    /* Cor do texto */
+    padding: 15px;
+    /* Espaçamento interno */
+    border-left: 10px solid #ff0000;
+    /* Borda vermelha para destaque */
+    border-radius: 5px;
+    /* Cantos arredondados */
+    font-weight: bold;
+    /* Texto em negrito */
+    display: none;
+    /* Inicia oculto */
+    text-align: center;
+    /* Centraliza o texto */
+    margin: 20px auto;
+    /* Centraliza horizontalmente */
+    max-width: 550px;
+    /* Largura máxima para o alerta */
+    position: relative;
+    /* Para posicionar o ícone */
+    font-size: 20px;
+}
+
+.errorMessage::before {
+    content: '⚠️';
+    /* Ícone de alerta */
+    font-size: 24px;
+    margin-right: 10px;
+}
+
+.errorMessage.show {
+    display: block;
+    /* Mostra o alerta quando a classe 'show' é adicionada */
+}

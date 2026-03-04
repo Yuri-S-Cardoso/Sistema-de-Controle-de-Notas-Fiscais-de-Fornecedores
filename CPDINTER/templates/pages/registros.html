@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registros no Mês</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-image: url('/static/image/background.jpg');
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border: 1px solid #007bff;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+            
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+            border-bottom: 2px solid #007bff;
+            border: 1px solid #007bff
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+        @media (max-width: 600px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            th {
+                position: sticky;
+                top: 0;
+                background-color: #4CAF50;
+            }
+            td {
+                position: relative;
+                padding-left: 50%;
+                text-align: right;
+            }
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 50%;
+                padding-left: 10px;
+                font-weight: bold;
+                text-align: left;
+                background-color: #f9f9f9;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Lançadas no Mês</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>CNPJ</th>
+                <th>Fornecedor</th>
+                <th>Data</th>
+                <th>Total (R$)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for registro in registros %}
+                <tr>
+                    <td data-label="CNPJ">{{ registro.for_cnpj }}</td>
+                    <td data-label="Fornecedor">{{ registro.for_nm_fornecedor }}</td>
+                    <td data-label="Data">{{ registro.for_dt_envio_cadastro }}</td>
+                    <td data-label="Total (R$)">{{ registro.total_notas|floatformat:2 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

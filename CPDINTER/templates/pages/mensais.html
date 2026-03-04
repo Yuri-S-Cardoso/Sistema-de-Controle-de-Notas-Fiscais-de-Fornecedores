@@ -1,0 +1,98 @@
+{% extends 'base/base.html' %}
+{% block content %}
+    <div class='index'>
+        <h1>Notas fornecedor</h1>
+        <form method="post" autocomplete="off">
+        {% csrf_token %}
+        <div class="bloco">
+            <label for="">CNPJ:</label><br>
+            <input type="number" name="for_cnpj" value="{{ request.GET.for_cnpj}}" placeholder="Digite aqui" oninput="if(this.value.length > 14) this.value = this.value.slice(0, 14);" readonly/><br>
+            <label for="">ID SEQUENCIAL:</label><br>
+            <input type="number" name="for_id_sequencial" value="{{ request.GET.for_id_sequencial }}" placeholder="Digite aqui" oninput="if(this.value.length > 2) this.value = this.value.slice(0, 2);" readonly/><br>
+            <label for="">NUMERO DA NOTA:</label><br>
+            <input type="number" name="for_nr_nota" placeholder="Digite aqui" oninput="if(this.value.length > 15) this.value = this.value.slice(0, 15);" required /><br>
+            <label for="">VALOR DA NOTA:</label><br>
+            <input type="number" id="for_vl_nota" name="for_vl_nota" placeholder="Digite aqui" step="0.01" required /><br>
+        </div>
+        <div class="bloco">
+            <label for="">ENTREGA:</label><br>
+            <input type="date" name="for_dt_entrega" placeholder="Digite aqui" /><br>
+            <label for="">EMISSÃO:</label><br>
+            <input type="date" name="for_dt_emissao" placeholder="Digite aqui" required /><br>
+            <label for="">VENCIMENTO:</label><br>
+            <input type="date" name="for_dt_vencimento" placeholder="Digite aqui" required /><br>
+            <label for="">ENVIO CADASTRO:</label><br>
+            <input type="date" id="for_dt_envio_cadastro" name="for_dt_envio_cadastro" placeholder="Digite aqui" required /><br>
+        </div>
+        <div class="bloco">
+            <label for="">ENVIO FINANCIERO:</label><br>
+            <input type="date" id="for_dt_envio_financ" name="for_dt_envio_financ" placeholder="Digite aqui" /><br>
+            <label for="">OBSERVAÇÃO:</label><br>
+            <input type="text" name="for_tx_observacao" placeholder="Digite aqui" oninput="this.value = this.value.toUpperCase()" required /><br>
+            <br><br><br><br>
+        </div>
+        <br/><br/>
+        <input class="cadastrar" type="submit" value="Cadastrar" />
+        <button class="sair" onclick="voltar('{{ request.GET.for_cnpj }}')">Voltar</button>
+        </form>
+        <a href="{% url 'index' %}"><button class="dados">Sair</button></a>
+        <br>
+        <!--
+          <button class="voltar" onclick="voltar()">Voltar</button>
+          <br><br>
+        -->
+        <table>
+          <thead>
+              <tr>
+                  <th>NUMERO DA NOTA</th>
+                  <th>VALOR DA NOTA</th>
+                  <th>ENTREGA</th>
+                  <th>EMISSÃO</th>
+                  <th>VENCIMENTO</th>
+                  <th>ENVIO CADASTRO</th>
+                  <th>ENVIO FINANCIERO</th>
+                  <th>OBSERVAÇÃO</th>
+                  <th>Editar</th> 
+              </tr>
+          </thead>
+          <tbody>
+              {% for nota in notas_mensais %}
+              <tr>
+                  <td>{{ nota.for_nr_nota }}</td>
+                  <td>R$ {{ nota.for_vl_nota }}</td>
+                  <td>{{ nota.for_dt_entrega }}</td>
+                  <td>{{ nota.for_dt_emissao }}</td>
+                  <td>{{ nota.for_dt_vencimento }}</td>
+                  <td>{{ nota.for_dt_envio_cadastro }}</td>
+                  <td>{{ nota.for_dt_envio_financ }}</td>
+                  <td>{{ nota.for_tx_observacao }}</td>
+                  <td>
+                    <form action="{% url 'editar_nota' for_cnpj for_id_sequencial nota.for_nr_nota %}" method="get">
+                      <button type="submit">Editar</button>
+                    </form>              
+                  </td>
+              </tr>
+              {% endfor %}
+          </tbody>
+        </table>
+    </div>
+  <script>
+    function voltar(for_cnpj) {
+      window.location.href = "{% url 'notas' %}?for_cnpj=" + for_cnpj;
+    }
+
+    //----------------------------------
+
+    function getCurrentDate() {
+      var today = new Date();
+      var dd = String(today.getDate()).padStart(2, '0');
+      var mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+      var yyyy = today.getFullYear();
+
+      return yyyy + '-' + mm + '-' + dd;
+    }
+
+    // Define a data atual como valor padrão no campo de entrada de data
+    document.getElementById('for_dt_envio_cadastro').value = getCurrentDate();
+  </script>
+{% endblock %}
