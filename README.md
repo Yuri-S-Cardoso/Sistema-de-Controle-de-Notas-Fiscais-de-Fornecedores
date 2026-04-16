@@ -145,7 +145,6 @@ O funcionamento principal da aplicação segue este fluxo:
 - **Plotly Express** importado no projeto
 - **Pandas** importado no projeto
 
-> Observação: Plotly e Pandas foram identificados nos imports, mas sem evidência clara de uso efetivo no fluxo principal atual.
 
 ---
 
